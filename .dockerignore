@@ -1,5 +1,6 @@
 node_modules
 dist
+.git
 .vercel
 layout.json
-layout.json.*.tmp
+*.tmp

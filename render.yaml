@@ -1,0 +1,15 @@
+# Render Blueprint (New > Blueprint, pick this repo). Disks need a paid instance type.
+services:
+  - type: web
+    name: virtual-office-space
+    runtime: docker
+    plan: starter
+    region: singapore
+    healthCheckPath: /
+    envVars:
+      - key: OWNER_KEY
+        sync: false
+    disk:
+      name: office-data
+      mountPath: /data
+      sizeGB: 1

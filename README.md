@@ -36,12 +36,28 @@ Press **B**. Tools:
 
 **Save** asks for the owner key, which you set with `OWNER_KEY` (the default is `dev`, so change it before deploying). Saved layouts go to `layout.json` and are pushed live to everyone. Visitors can play in build mode too, but their changes stay on their own screen.
 
-## Deploy
-You need a host that runs Bun with WebSockets and a persistent disk for `layout.json`: Railway, Fly.io, Render or a VPS.
+## Deploy: site on Vercel, multiplayer on Fly.io (or Render)
+Vercel serves the static site. It can't run the WebSocket server or keep `layout.json`, so `server.ts` runs on Fly.io or Render from the included `Dockerfile`.
+
+**1. Multiplayer server on Fly.io** (`fly.toml`: Singapore region, one always-on machine, 1 GB volume at `/data`)
 ```bash
-OWNER_KEY=some-long-secret PORT=3000 bun run start
+fly auth login
+fly launch --copy-config --no-deploy        # keep app name or pick your own
+fly volumes create office_data --size 1 --region sin
+fly secrets set OWNER_KEY=some-long-secret
+fly deploy
 ```
-Vercel's serverless functions can't host the WebSocket server.
+Your server is now at `wss://<app>.fly.dev` (it also serves the full site at `https://<app>.fly.dev`).
+
+*Render instead:* New → Blueprint → pick this repo (`render.yaml`). Set `OWNER_KEY` when asked. Disks need a paid instance.
+
+**2. Site on Vercel** (`vercel.json` runs `bun run build` and serves `dist/`)
+1. Import the GitHub repo at vercel.com/new (no framework preset needed).
+2. Add an environment variable `OFFICE_WS_URL` = `wss://<app>.fly.dev`, then deploy.
+
+Every push to `main` redeploys the site. Run `fly deploy` again when `server.ts` changes.
+
+To check a static build locally: `OFFICE_WS_URL=ws://localhost:3000 bun run build`, then serve `dist/` while `bun run dev` runs.
 
 ## Tests
 `bun test` runs the path-finding tests plus server checks (junk messages, session isolation, owner key, concurrent saves).
