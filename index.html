@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Doodle Office · Portfolio</title>
+    <meta name="description" content="Walk around my doodle office portfolio. Multiplayer, so say hi!" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Patrick+Hand&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="./src/style.css" />
+  </head>
+  <body>
+    <div id="app"></div>
+
+    <header class="hud hud-left card">
+      <small>portfolio · virtual office</small>
+      <strong id="office-name">Doodle Office</strong>
+      <div class="chips">
+        <button id="session" class="chip" title="Switch session">🚪 lobby</button>
+        <span id="online" class="chip">connecting…</span>
+      </div>
+    </header>
+
+    <nav class="hud hud-right">
+      <button id="btn-portfolio" class="btn yellow" aria-label="Portfolio">📁<span class="lbl"> Portfolio</span></button>
+      <button id="btn-char" class="btn" aria-label="Edit character">👕<span class="lbl"> Character</span></button>
+      <button id="btn-view" class="btn" aria-label="Switch camera view">🎥<span class="lbl"> 3rd person</span></button>
+      <button id="btn-build" class="btn" aria-label="Build mode" aria-pressed="false">🔨<span class="lbl"> Build</span></button>
+      <button id="btn-invite" class="btn" aria-label="Copy invite link">🔗<span class="lbl"> Invite</span></button>
+    </nav>
+
+    <div class="hud emotes">
+      <button id="btn-wave" class="btn round" title="Wave (1)">👋</button>
+      <button id="btn-dance" class="btn round" title="Dance (2)">💃</button>
+      <button id="btn-jump" class="btn round touch-only" title="Jump (Space)">⤴️</button>
+    </div>
+
+    <button id="prompt" class="card" hidden></button>
+
+    <div id="stick" class="hud" aria-hidden="true"><div class="knob"></div></div>
+    <p class="hint">WASD / arrows or click the floor to walk · Shift run · Space jump · drag to look · E interact · Enter chat · V view</p>
+
+    <div class="chatbox">
+      <ul id="chatlog"></ul>
+      <form id="chat"><input maxlength="200" placeholder="Press Enter to chat…" aria-label="Chat message" /></form>
+    </div>
+
+    <aside id="creator" class="card panel" hidden>
+      <form>
+        <h2>✨ Make your doodle</h2>
+        <p class="muted">Welcome to the office! Pick a look first.</p>
+        <label class="row"><span>Name</span><input id="name" maxlength="20" placeholder="Your name" autocomplete="nickname" /></label>
+        <div id="creator-rows"></div>
+        <footer>
+          <button type="button" id="random" class="btn">🎲 Random</button>
+          <button type="submit" class="btn yellow">✔ Let's go</button>
+        </footer>
+        <button type="button" id="skip" class="linkbtn">In a hurry? Skip and show me the portfolio →</button>
+      </form>
+    </aside>
+
+    <aside id="build" class="card panel left" hidden>
+      <header>
+        <h2>🔨 Build mode</h2>
+        <span>
+          <button id="build-collapse" class="btn round" aria-label="Collapse panel" aria-expanded="true">▾</button>
+          <button data-a="exit" class="btn round" aria-label="Exit build mode">✕</button>
+        </span>
+      </header>
+      <div id="placing-bar" class="tools" hidden>
+        <b>Placing…</b>
+        <button data-a="rotate" class="btn">↻ Rotate</button>
+        <button data-a="stopplace" class="btn">✋ Stop placing</button>
+      </div>
+      <div class="tools">
+        <button data-tool="select" class="btn">👆 Select</button>
+        <button data-tool="paint" class="btn">🎨 Paint</button>
+        <button data-tool="wall" class="btn">🧱 Wall</button>
+        <button data-tool="room" class="btn">🏠 Room</button>
+        <button data-tool="erase" class="btn">🔨 Erase wall</button>
+      </div>
+      <p id="tool-hint" class="muted small"></p>
+      <div id="paint-colors" class="swatches" hidden></div>
+      <div id="cat-tabs" class="tabs"></div>
+      <div id="catalog"></div>
+      <section id="selection" hidden>
+        <b id="sel-name"></b>
+        <div class="tools">
+          <button data-a="rotate" class="btn">↻ Rotate <kbd>R</kbd></button>
+          <button data-a="move" class="btn">✋ Move</button>
+          <button data-a="copy" class="btn">⧉ Copy</button>
+          <button data-a="delete" class="btn red">🗑 <kbd>Del</kbd></button>
+          <button data-a="swap" class="btn">🪟 Wall ⇄ window</button>
+        </div>
+        <input id="sel-text" maxlength="120" placeholder="Text" aria-label="Item text" hidden />
+        <div id="sel-colors" class="swatches"></div>
+      </section>
+      <details class="lot">
+        <summary>📐 Lot size</summary>
+        <label>Width <input id="lot-w" type="number" min="8" max="48" /></label>
+        <label>Depth <input id="lot-d" type="number" min="8" max="40" /></label>
+      </details>
+      <footer>
+        <button data-a="undo" class="btn" title="Undo (Ctrl/Cmd+Z)">↶ Undo</button>
+        <button data-a="redo" class="btn" title="Redo (Ctrl/Cmd+Shift+Z)">↷ Redo</button>
+        <button data-a="save" class="btn yellow">💾 Save</button>
+        <button data-a="discard" class="btn">↩️ Discard</button>
+        <button data-a="reset" class="btn">🧹 Default</button>
+      </footer>
+      <p id="build-note" class="muted small">R rotates, right-click / Esc stops placing, WASD pans. Only the owner can save. Visitors, go wild, it's just for you 🙃</p>
+    </aside>
+
+    <dialog id="portfolio" class="card">
+      <form method="dialog"><button class="btn round close" aria-label="Close">✕</button></form>
+      <nav class="tabs">
+        <button data-tab="about">👋 About</button>
+        <button data-tab="projects">📌 Projects</button>
+        <button data-tab="experience">🏆 Experience</button>
+        <button data-tab="contact">📮 Contact</button>
+      </nav>
+      <div id="portfolio-body"></div>
+    </dialog>
+
+    <div id="toast" role="status"></div>
+    <script type="module" src="./src/main.js"></script>
+  </body>
+</html>
